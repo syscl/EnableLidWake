@@ -79,7 +79,20 @@ void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_
                     
                     patch_info = &azul_patch_info;
                     applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG("EnableLidWake: Enable Lidwake for Haswell Platform");
+                    SYSLOG("EnableLidWake: Enable internal display after sleep for Haswell 1");
+                    
+                    
+                    const uint8_t azul_find1[]    = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0xd6, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
+                    const uint8_t azul_replace1[] = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
+                    KextPatch azul_patch_info1 {
+                        { &kextList[i], azul_find1, azul_replace1, sizeof(azul_find1), 1 },
+                        KernelVersion::Yosemite, KernelVersion::HighSierra
+                    };
+                    
+                    
+                    patch_info = &azul_patch_info1;
+                    applyPatches(patcher, index, patch_info, 1);
+                    SYSLOG("EnableLidWake: Enable internal display after sleep for Haswell 2");
                     
                     progressState |= ProcessingState::EverythingDone;
                     break;
