@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C748C2D1C21952C0024EED2 /* kern_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C748C2C1C21952C0024EED2 /* kern_start.cpp */; };
-		A0DB59A71ED4C9A300BE2727 /* EnableLidWake.hpp in Headers */ = {isa = PBXBuildFile; fileRef = A0DB59A51ED4C9A300BE2727 /* EnableLidWake.hpp */; };
-		A0DB59A81ED4C9A300BE2727 /* EnableLidWake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0DB59A61ED4C9A300BE2727 /* EnableLidWake.cpp */; };
 		CE405EC91E49DD9700AA0B3D /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE405EC71E49DD7100AA0B3D /* libkmod.a */; };
 		CE405ED91E4A080700AA0B3D /* plugin_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE405ED81E4A080700AA0B3D /* plugin_start.cpp */; };
+		E8E9E4252011ADD400D7CF92 /* EnableLidWake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8E9E4212011ADD300D7CF92 /* EnableLidWake.cpp */; };
+		E8E9E4262011ADD400D7CF92 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8E9E4222011ADD400D7CF92 /* Info.plist */; };
+		E8E9E4272011ADD400D7CF92 /* EnableLidWake.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E8E9E4232011ADD400D7CF92 /* EnableLidWake.hpp */; };
+		E8E9E4282011ADD400D7CF92 /* kern_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8E9E4242011ADD400D7CF92 /* kern_start.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,12 +29,8 @@
 
 /* Begin PBXFileReference section */
 		1C748C271C21952C0024EED2 /* EnableLidWake.kext */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnableLidWake.kext; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C748C2C1C21952C0024EED2 /* kern_start.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = kern_start.cpp; sourceTree = "<group>"; };
-		1C748C2E1C21952C0024EED2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1CF01C901C8CF97F002DCEA3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1CF01C921C8CF997002DCEA3 /* Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Changelog.md; sourceTree = "<group>"; };
-		A0DB59A51ED4C9A300BE2727 /* EnableLidWake.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EnableLidWake.hpp; sourceTree = "<group>"; };
-		A0DB59A61ED4C9A300BE2727 /* EnableLidWake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnableLidWake.cpp; sourceTree = "<group>"; };
 		CE405EBA1E49DD7100AA0B3D /* kern_compression.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_compression.hpp; sourceTree = "<group>"; };
 		CE405EBB1E49DD7100AA0B3D /* kern_disasm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_disasm.hpp; sourceTree = "<group>"; };
 		CE405EBC1E49DD7100AA0B3D /* kern_file.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_file.hpp; sourceTree = "<group>"; };
@@ -49,6 +46,10 @@
 		CE405ED21E49F9FC00AA0B3D /* kern_api.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_api.hpp; sourceTree = "<group>"; };
 		CE405ED81E4A080700AA0B3D /* plugin_start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plugin_start.cpp; sourceTree = "<group>"; };
 		CE405EDA1E4A080F00AA0B3D /* plugin_start.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = plugin_start.hpp; sourceTree = "<group>"; };
+		E8E9E4212011ADD300D7CF92 /* EnableLidWake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnableLidWake.cpp; path = EnableLidWake/EnableLidWake.cpp; sourceTree = SOURCE_ROOT; };
+		E8E9E4222011ADD400D7CF92 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = EnableLidWake/Info.plist; sourceTree = SOURCE_ROOT; };
+		E8E9E4232011ADD400D7CF92 /* EnableLidWake.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EnableLidWake.hpp; path = EnableLidWake/EnableLidWake.hpp; sourceTree = SOURCE_ROOT; };
+		E8E9E4242011ADD400D7CF92 /* kern_start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kern_start.cpp; path = EnableLidWake/kern_start.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,13 +85,13 @@
 		1C748C291C21952C0024EED2 /* EnableLidWake */ = {
 			isa = PBXGroup;
 			children = (
-				A0DB59A51ED4C9A300BE2727 /* EnableLidWake.hpp */,
-				A0DB59A61ED4C9A300BE2727 /* EnableLidWake.cpp */,
-				1C748C2C1C21952C0024EED2 /* kern_start.cpp */,
-				1C748C2E1C21952C0024EED2 /* Info.plist */,
+				E8E9E4212011ADD300D7CF92 /* EnableLidWake.cpp */,
+				E8E9E4232011ADD400D7CF92 /* EnableLidWake.hpp */,
+				E8E9E4222011ADD400D7CF92 /* Info.plist */,
+				E8E9E4242011ADD400D7CF92 /* kern_start.cpp */,
 			);
 			name = EnableLidWake;
-			path = EanbleLidWake;
+			path = EnableLidWake;
 			sourceTree = "<group>";
 		};
 		1CF01C911C8CF982002DCEA3 /* Docs */ = {
@@ -149,7 +150,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0DB59A71ED4C9A300BE2727 /* EnableLidWake.hpp in Headers */,
+				E8E9E4272011ADD400D7CF92 /* EnableLidWake.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8E9E4262011ADD400D7CF92 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,8 +224,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE405ED91E4A080700AA0B3D /* plugin_start.cpp in Sources */,
-				1C748C2D1C21952C0024EED2 /* kern_start.cpp in Sources */,
-				A0DB59A81ED4C9A300BE2727 /* EnableLidWake.cpp in Sources */,
+				E8E9E4252011ADD400D7CF92 /* EnableLidWake.cpp in Sources */,
+				E8E9E4282011ADD400D7CF92 /* kern_start.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,7 +332,7 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/Lilu.kext/Contents/Resources";
-				INFOPLIST_FILE = "$(SRCROOT)/EanbleLidWake/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/EnableLidWake/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Lilu.kext/Contents/Resources/Library",
@@ -373,7 +375,7 @@
 					"PRODUCT_NAME=$(PRODUCT_NAME)",
 				);
 				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/Lilu.kext/Contents/Resources";
-				INFOPLIST_FILE = "$(SRCROOT)/EanbleLidWake/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/EnableLidWake/Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Lilu.kext/Contents/Resources/Library",

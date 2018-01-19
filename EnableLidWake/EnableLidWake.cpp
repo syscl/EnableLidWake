@@ -30,7 +30,7 @@ static KernelPatcher::KextInfo kextList[] {
     { GraphicsKextCFBundleIdentifier[kSKL], &GraphicKextPath[kSKL], 1, {true}, {}, KernelPatcher::KextInfo::Unloaded }
 };
 
-static size_t kextListSize = getArrayLength(kextList);
+static size_t kextListSize = arrsize(kextList);
 
 
 bool LidWake::init()
