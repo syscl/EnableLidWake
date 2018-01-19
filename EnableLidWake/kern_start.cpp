@@ -9,7 +9,7 @@
 
 #include "EnableLidWake.hpp"
 
-static LidWake patchset;
+static LWEnabler elw;
 
 const char* kBootArgvDisable[] = { "-elwoff"  };
 const char* kBootArgvDebug[]   = { "-elwdbg"  };
@@ -32,5 +32,5 @@ PluginConfiguration ADDPR(config) =
 	KernelVersion::Yosemite, KernelVersion::HighSierra,
 
     // now let's get start
-	[]() { patchset.init(); }
+	[]() { elw.init(); }
 };

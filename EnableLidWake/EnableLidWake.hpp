@@ -4,18 +4,13 @@
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu/
  */
 
-#ifndef __ENABLE_LIDWAKE_HPP__
-#define __ENABLE_LIDWAKE_HPP__
+#ifndef EnableLidWake_hpp
+#define EnableLidWake_hpp
 
 #include <Headers/kern_patcher.hpp>
 
 #define kCurrentKextID "org.syscl.EnableLidWake"
 
-/*
-#define kHSW   0
-#define kSKL   1
-#define kKBL   2
-*/
 enum { kHSW = 0, kSKL, kKBL };
 
 struct KextPatch {
@@ -24,13 +19,18 @@ struct KextPatch {
     uint32_t maxKernel;
 };
 
-class LidWake
+class LWEnabler
 {
 public:
 	bool init();
 	void deinit();
 	
 private:
+    /**
+     *
+     */
+    uint32_t getIgPlatformId(void) const;
+    
 	/**
 	 *  Patch kext if needed and prepare other patches
 	 *
@@ -63,4 +63,4 @@ private:
     int progressState {ProcessingState::NothingReady};
 };
 
-#endif
+#endif /*  EnableLidWake_hpp */

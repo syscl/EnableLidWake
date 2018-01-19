@@ -7,14 +7,14 @@
 
 #include <Headers/kern_api.hpp>
 #include <Headers/kern_util.hpp>
-#include <Library/LegacyIOService.h>
+#include <Headers/plugin_start.hpp>
 
-#include <mach/vm_map.h>
-#include <IOKit/IORegistryEntry.h>
+#include <Headers/kern_iokit.hpp>
 
 #include "EnableLidWake.hpp"
 
-KernelVersion KernelCheck = getKernelVersion();
+KernelVersion      gKernMajorVersion = getKernelVersion();
+KernelMinorVersion gKernMinorVersion = getKernelMinorVersion();
 
 static const char *GraphicsKextCFBundleIdentifier[] = {
     "com.apple.driver.AppleIntelFramebufferAzul",
@@ -34,11 +34,32 @@ static KernelPatcher::KextInfo kextList[] {
 static size_t kextListSize = arrsize(kextList);
 
 
-bool LidWake::init()
+uint32_t LWEnabler::getIgPlatformId() const
+{
+    uint32_t platform = 0;
+    const char *tree[] {"AppleACPIPCI", "IGPU"};
+    auto sect = WIOKit::findEntryByPrefix("/AppleACPIPlatformExpert", "PCI", gIOServicePlane);
+    for (size_t i = 0; sect && i < arrsize(tree); i++) {
+        sect = WIOKit::findEntryByPrefix(sect, tree[i], gIOServicePlane);
+        if (sect && i+1 == arrsize(tree)) {
+            if (WIOKit::getOSDataValue(sect, "AAPL,ig-platform-id", platform)) {
+                DBGLOG(kCurrentKextID, "found IGPU with ig-platform-id 0x%08x", platform);
+                return platform;
+            } else {
+                SYSLOG(kCurrentKextID, "found IGPU with missing ig-platform-id, assuming old");
+            }
+        }
+    }
+    
+    DBGLOG(kCurrentKextID, "failed to find IGPU ig-platform-id");
+    return platform;
+}
+
+bool LWEnabler::init()
 {
 	LiluAPI::Error error = lilu.onKextLoad(kextList, kextListSize,
     [](void* user, KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size) {
-        LidWake* patch = static_cast<LidWake*>(user);
+        LWEnabler* patch = static_cast<LWEnabler*>(user);
 		patch->processKext(patcher, index, address, size);
 	}, this);
 	
@@ -51,80 +72,97 @@ bool LidWake::init()
 	return true;
 }
 
-void LidWake::deinit() {}
+void LWEnabler::deinit() {}
 
-void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size)
+void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size)
 {
-    KextPatch *patch_info;
-    if (progressState != ProcessingState::EverythingDone)
+    // check if we already done here
+    if (progressState == ProcessingState::EverythingDone) return;
+    
+    // we reach here, now let's get started
+    uint32_t gIgPlatformId = getIgPlatformId();
+    
+    for (size_t i = 0; i < kextListSize; i++)
     {
-        for (size_t i = 0; i < kextListSize; i++)
+        if (kextList[i].loadIndex != index) continue;
+        //
+        // Enable lid wake for Haswell(Azul) platform
+        //
+        if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kHSW]))
         {
-            if (kextList[i].loadIndex == index)
+            SYSLOG(kCurrentKextID, "found %s", kextList[i].id);
+            
+            if (gIgPlatformId == static_cast<uint32_t>(0x0a2e0008))
             {
-                //
-                // Enable lid wake for Haswell(Azul) platform
-                //
-                if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kHSW]))
+                // 10.10.1- do not require any internal display patches
+                if (gKernMajorVersion == KernelVersion::Yosemite && gKernMinorVersion < 2) continue;
+                
+                // apply the patch for 0x0a2e0008
+                uint8_t azul_find[] = { 0x40, 0x00, 0x00, 0x00, 0x1e, 0x02, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
+                //                                                       ^                                           <-- High Sierra differ here 0x02
+                uint8_t azul_repl[] = { 0x40, 0x00, 0x00, 0x00, 0x0f, 0x02, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
+                //                                                ^      ^                                           <-- High Sierra differ here 0x1f and 0x02
+                // correct patch for High Sierra
+                if (gKernMajorVersion >= KernelVersion::HighSierra)
                 {
-                    SYSLOG(kCurrentKextID, ": found %s", kextList[i].id);
-                    
-                    const uint8_t azul_find[]    = { 0x40, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
-                    const uint8_t azul_replace[] = { 0x40, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
-                    KextPatch azul_patch_info {
-                        { &kextList[i], azul_find, azul_replace, sizeof(azul_find), 1 },
-                        KernelVersion::Yosemite, KernelVersion::HighSierra
-                    };
-                    
-                    patch_info = &azul_patch_info;
-                    applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG(kCurrentKextID, ": Enable internal display after sleep for Haswell 1");
-                    
-                    
-                    const uint8_t azul_find1[]    = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0xd6, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
-                    const uint8_t azul_replace1[] = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
-                    KextPatch azul_patch_info1 {
-                        { &kextList[i], azul_find1, azul_replace1, sizeof(azul_find1), 1 },
-                        KernelVersion::Yosemite, KernelVersion::HighSierra
-                    };
-                    
-                    
-                    patch_info = &azul_patch_info1;
-                    applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG(kCurrentKextID, ": Enable internal display after sleep for Haswell 2");
-                    
-                    progressState |= ProcessingState::EverythingDone;
-                    break;
+                    // find pattern change
+                    azul_find[5] = 0x02;
+                    // replace pattern change
+                    azul_repl[4] = 0x1f;
+                    azul_repl[5] = 0x02;
                 }
                 
-                //
-                // Enable lid wake for Skylake(skl) platform
-                //
-                if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kSKL]))
-                {
-                    SYSLOG(kCurrentKextID, ": found %s", kextList[i].id);
-                    
-                    const uint8_t skl_find[]    = { 0x0a, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
-                    const uint8_t skl_replace[] = { 0x0f, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
-                    KextPatch skl_patch_info {
-                        { &kextList[i], skl_find, skl_replace, sizeof(skl_find), 1 },
-                        KernelVersion::ElCapitan, KernelVersion::HighSierra
-                    };
-                    
-                    patch_info = &skl_patch_info;
-                    applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG(kCurrentKextID, ": Enable Lidwake for Skylake Platform");
-                    
-                    progressState |= ProcessingState::EverythingDone;
-                    break;
-                }
+                KextPatch azul_patch_info {
+                    { &kextList[i], azul_find, azul_repl, sizeof(azul_find), 1 },
+                    KernelVersion::Yosemite, KernelVersion::HighSierra
+                };
+                
+                applyPatches(patcher, index, &azul_patch_info, 1);
+                SYSLOG(kCurrentKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                progressState |= ProcessingState::EverythingDone;
+                
+            } else if (gIgPlatformId == static_cast<uint32_t>(0x0a2e000a) ||
+                       gIgPlatformId == static_cast<uint32_t>(0x0a26000a)) {
+                // ig-platform that are 0x0a2e000a and 0x0a26000a
+                const uint8_t azul_find[] = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0xd6, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
+                const uint8_t azul_repl[] = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
+                KextPatch azul_patch_info1 {
+                    { &kextList[i], azul_find, azul_repl, sizeof(azul_find), 1 },
+                    KernelVersion::Yosemite, KernelVersion::HighSierra
+                };
+                
+                applyPatches(patcher, index, &azul_patch_info1, 1);
+                SYSLOG(kCurrentKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                progressState |= ProcessingState::EverythingDone;
             }
+        }
+        
+        //
+        // Enable lid wake for Skylake(skl) platform
+        //
+        if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kSKL]))
+        {
+            SYSLOG(kCurrentKextID, "found %s", kextList[i].id);
+            if (gIgPlatformId != static_cast<uint32_t>(0x19260004)) return;
+            
+            const uint8_t skl_find[] = { 0x0a, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
+            const uint8_t skl_repl[] = { 0x0f, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
+            KextPatch skl_patch_info {
+                { &kextList[i], skl_find, skl_repl, sizeof(skl_find), 1 },
+                KernelVersion::ElCapitan, KernelVersion::HighSierra
+            };
+
+            applyPatches(patcher, index, &skl_patch_info, 1);
+            SYSLOG(kCurrentKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+            
+            progressState |= ProcessingState::EverythingDone;
+            break;
         }
     }
 	patcher.clearError();
 }
 
-void LidWake::applyPatches(KernelPatcher& patcher, size_t index, const KextPatch* patches, size_t patchNum)
+void LWEnabler::applyPatches(KernelPatcher& patcher, size_t index, const KextPatch* patches, size_t patchNum)
 {
     for (size_t p = 0; p < patchNum; p++)
     {
@@ -133,8 +171,8 @@ void LidWake::applyPatches(KernelPatcher& patcher, size_t index, const KextPatch
         {
             if (patcher.compatibleKernel(patch.minKernel, patch.maxKernel))
             {
-                SYSLOG(kCurrentKextID, ": patching %s (%ld/%ld)...", patch.patch.kext->id, p+1, patchNum);
                 patcher.applyLookupPatch(&patch.patch);
+                SYSLOG(kCurrentKextID, "patch %s (%ld/%ld).", patch.patch.kext->id, p+1, patchNum);
                 patcher.clearError();
             }
         }
