@@ -18,19 +18,18 @@ const char* kBootArgvBeta[]    = { "-elwbeta" };
 
 PluginConfiguration ADDPR(config) =
 {
-	xStringify(PRODUCT_NAME),
+    xStringify(PRODUCT_NAME),
     parseModuleVersion(xStringify(MODULE_VERSION)),
     LiluAPI::AllowNormal | LiluAPI::AllowInstallerRecovery,
-    
-	kBootArgvDisable, arrsize(kBootArgvDisable),
+    kBootArgvDisable, arrsize(kBootArgvDisable),
     
     kBootArgvDebug,   arrsize(kBootArgvDebug),
     
-	kBootArgvBeta,    arrsize(kBootArgvBeta),
+    kBootArgvBeta,    arrsize(kBootArgvBeta),
     
     // minKernel: 10.10.x - maxKernel: 10.13.z
-	KernelVersion::Yosemite, KernelVersion::HighSierra,
-
+    KernelVersion::Yosemite, KernelVersion::HighSierra,
+    
     // now let's get start
-	[]() { elw.init(); }
+    []() { elw.init(); }
 };

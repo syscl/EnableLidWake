@@ -6,6 +6,7 @@ This kext (actually Lilu friend) provides you the ability to fix the lid wake is
 ####  Requriments
 Lilu.kext 1.2.0 and later
 macOS version that is greater than 10.10.2 (because previous OS X do not have this issue)
+Inject correct ig-platform-id for your system.
 
 ####  Usage
 Place it under any bootloader injection folder or ```/Library/Extensions``` then reboot.
