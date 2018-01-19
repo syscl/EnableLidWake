@@ -22,12 +22,13 @@ PluginConfiguration ADDPR(config) =
 {
 	xStringify(PRODUCT_NAME),
     parseModuleVersion(xStringify(MODULE_VERSION)),
+    LiluAPI::AllowNormal | LiluAPI::AllowInstallerRecovery,
     
-	kBootArgvDisable, getArrayLength(kBootArgvDisable),
+	kBootArgvDisable, arrsize(kBootArgvDisable),
     
-    kBootArgvDebug,   getArrayLength(kBootArgvDebug),
+    kBootArgvDebug,   arrsize(kBootArgvDebug),
     
-	kBootArgvBeta,    getArrayLength(kBootArgvBeta),
+	kBootArgvBeta,    arrsize(kBootArgvBeta),
     
     // minKernel: 10.10.x - maxKernel: 10.13.z
 	KernelVersion::Yosemite, KernelVersion::HighSierra,

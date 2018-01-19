@@ -11,10 +11,14 @@
 
 #include "syscl_lib.h"
 
+#define kCurrentKextID "org.syscl.EnableLidWake"
+
+/*
 #define kHSW   0
 #define kSKL   1
 #define kKBL   2
-
+*/
+enum { kHSW = 0, kSKL, kKBL };
 
 struct KextPatch {
     KernelPatcher::LookupPatch patch;
@@ -58,7 +62,7 @@ private:
 			EverythingDone = 1,
 		};
 	};
-    auto progressState {ProcessingState::NothingReady};
+    int progressState {ProcessingState::NothingReady};
 };
 
 #endif

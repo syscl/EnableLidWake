@@ -29,8 +29,8 @@ static const char *GraphicKextPath[] = {
 };
 
 static KernelPatcher::KextInfo kextList[] {
-    { GraphicsKextCFBundleIdentifier[kHSW], &GraphicKextPath[kHSW], 1, true, {}, KernelPatcher::KextInfo::Unloaded },
-    { GraphicsKextCFBundleIdentifier[kSKL], &GraphicKextPath[kSKL], 1, true, {}, KernelPatcher::KextInfo::Unloaded }
+    { GraphicsKextCFBundleIdentifier[kHSW], &GraphicKextPath[kHSW], 1, {true}, {}, KernelPatcher::KextInfo::Unloaded },
+    { GraphicsKextCFBundleIdentifier[kSKL], &GraphicKextPath[kSKL], 1, {true}, {}, KernelPatcher::KextInfo::Unloaded }
 };
 
 static size_t kextListSize = getArrayLength(kextList);
@@ -46,7 +46,7 @@ bool LidWake::init()
 	
 	if (error != LiluAPI::Error::NoError)
     {
-		SYSLOG("EnableLidWake: failed to register onPatcherLoad method %d", error);
+		SYSLOG(kCurrentKextID, "failed to register onPatcherLoad method %d", error);
 		return false;
 	}
 	
@@ -69,7 +69,7 @@ void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_
                 //
                 if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kHSW]))
                 {
-                    SYSLOG("EnableLidWake: found %s", kextList[i].id);
+                    SYSLOG(kCurrentKextID, ": found %s", kextList[i].id);
                     
                     const uint8_t azul_find[]    = { 0x40, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
                     const uint8_t azul_replace[] = { 0x40, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
@@ -80,7 +80,7 @@ void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_
                     
                     patch_info = &azul_patch_info;
                     applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG("EnableLidWake: Enable internal display after sleep for Haswell 1");
+                    SYSLOG(kCurrentKextID, ": Enable internal display after sleep for Haswell 1");
                     
                     
                     const uint8_t azul_find1[]    = { 0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0xd6, 0x00, 0x00, 0x00, 0x05, 0x05, 0x00, 0x00 };
@@ -93,7 +93,7 @@ void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_
                     
                     patch_info = &azul_patch_info1;
                     applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG("EnableLidWake: Enable internal display after sleep for Haswell 2");
+                    SYSLOG(kCurrentKextID, ": Enable internal display after sleep for Haswell 2");
                     
                     progressState |= ProcessingState::EverythingDone;
                     break;
@@ -104,7 +104,7 @@ void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_
                 //
                 if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kSKL]))
                 {
-                    SYSLOG("EnableLidWake: found %s", kextList[i].id);
+                    SYSLOG(kCurrentKextID, ": found %s", kextList[i].id);
                     
                     const uint8_t skl_find[]    = { 0x0a, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
                     const uint8_t skl_replace[] = { 0x0f, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
@@ -115,7 +115,7 @@ void LidWake::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_
                     
                     patch_info = &skl_patch_info;
                     applyPatches(patcher, index, patch_info, 1);
-                    SYSLOG("EnableLidWake: Enable Lidwake for Skylake Platform");
+                    SYSLOG(kCurrentKextID, ": Enable Lidwake for Skylake Platform");
                     
                     progressState |= ProcessingState::EverythingDone;
                     break;
@@ -135,7 +135,7 @@ void LidWake::applyPatches(KernelPatcher& patcher, size_t index, const KextPatch
         {
             if (patcher.compatibleKernel(patch.minKernel, patch.maxKernel))
             {
-                SYSLOG("EnableLidWake: patching %s (%ld/%ld)...", patch.patch.kext->id, p+1, patchNum);
+                SYSLOG(kCurrentKextID, ": patching %s (%ld/%ld)...", patch.patch.kext->id, p+1, patchNum);
                 patcher.applyLookupPatch(&patch.patch);
                 patcher.clearError();
             }
