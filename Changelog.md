@@ -1,5 +1,8 @@
 EnableLidWake Changelog
 ==============
+#### v1.8
+- Correct indention
+
 #### v1.7
 - Variable ```gIgPlatformId``` cannot change
 

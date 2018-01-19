@@ -59,10 +59,10 @@ private:
      *  @param patchesNum patch number
      */
     void applyPatches(KernelPatcher &patcher, size_t index, const KextPatch *patches, size_t patchesNum);
-	
-	/**
-	 *  Current progress mask
-	 */
+    
+    /**
+     *  Current progress mask
+     */
 	struct ProcessingState {
 		enum {
 			NothingReady = 0,
