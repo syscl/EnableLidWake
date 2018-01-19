@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 syscl/lighting/Yating Zhou. All rights reserved.
+ * Copyright (c) 2017 syscl and corerobe. All rights reserved.
  *
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu/
  */

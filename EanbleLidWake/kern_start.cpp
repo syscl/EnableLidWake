@@ -2,8 +2,6 @@
  * Copyright (c) 2017 syscl/lighting/Yating Zhou. All rights reserved.
  *
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu/
- *
- * Credit also corerobe for his codebase
  */
 
 #include <Headers/plugin_start.hpp>

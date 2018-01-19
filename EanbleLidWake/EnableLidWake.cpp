@@ -1,10 +1,7 @@
 /*
- * Copyright (c) 2017 syscl/lighting/Yating Zhou. All rights reserved.
- *
+ * Copyright (c) 2017 syscl and corerobe. All rights reserved.
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu
  *
- * This work is licensed under the Creative Commons Attribution-NonCommercial
- * 4.0 Unported License => http://creativecommons.org/licenses/by-nc/4.0
  */
 
 #include <Headers/kern_api.hpp>
