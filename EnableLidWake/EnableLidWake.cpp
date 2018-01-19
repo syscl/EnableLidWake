@@ -56,19 +56,20 @@ uint32_t LWEnabler::getIgPlatformId() const
 
 bool LWEnabler::init()
 {
-	LiluAPI::Error error = lilu.onKextLoad(kextList, kextListSize,
+    LiluAPI::Error error = lilu.onKextLoad(kextList, kextListSize,
        [](void* user, KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size) {
            LWEnabler* patch = static_cast<LWEnabler*>(user);
            patch->processKext(patcher, index, address, size);
-	}, this);
-	
-	if (error != LiluAPI::Error::NoError)
+           
+       }, this);
+    
+    if (error != LiluAPI::Error::NoError)
     {
-		SYSLOG(kCurrentKextID, "failed to register onPatcherLoad method %d", error);
-		return false;
-	}
-	
-	return true;
+        SYSLOG(kCurrentKextID, "failed to register onPatcherLoad method %d", error);
+        return false;
+    }
+    
+    return true;
 }
 
 void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size)

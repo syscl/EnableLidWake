@@ -27,7 +27,7 @@ public:
     // destructor
     ~LWEnabler() { }
     // methods that are used to process patching
-	bool init();
+    bool init();
 	
 private:
     const KernelVersion gKernMajorVersion;
