@@ -63,13 +63,11 @@ private:
     /**
      *  Current progress mask
      */
-	struct ProcessingState {
+    struct ProcessingState {
         enum {
             NothingReady = 0,
             EverythingDone = 1,
-            
         };
-        
     };
     int progressState {ProcessingState::NothingReady};
 };
