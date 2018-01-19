@@ -77,7 +77,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
     if (progressState == ProcessingState::EverythingDone) return;
     
     // we reach here, now let's get started
-    uint32_t gIgPlatformId = getIgPlatformId();
+    const uint32_t gIgPlatformId = getIgPlatformId();
     
     for (size_t i = 0; i < kextListSize; i++)
     {

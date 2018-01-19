@@ -32,6 +32,7 @@ public:
 private:
     const KernelVersion gKernMajorVersion;
     const KernelMinorVersion gKernMinorVersion;
+
     /**
      * Obtain current ig-platform-id
      *

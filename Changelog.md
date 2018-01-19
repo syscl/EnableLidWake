@@ -1,5 +1,8 @@
 EnableLidWake Changelog
 ==============
+#### v1.7
+- Variable ```gIgPlatformId``` cannot change
+
 #### v 1.6
 - Fixed ```as.vit9696.Lilu``` to 1.2.0
 - Optimized using initialized lists

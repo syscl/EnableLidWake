@@ -21,6 +21,7 @@ PluginConfiguration ADDPR(config) =
     xStringify(PRODUCT_NAME),
     parseModuleVersion(xStringify(MODULE_VERSION)),
     LiluAPI::AllowNormal | LiluAPI::AllowInstallerRecovery,
+    
     kBootArgvDisable, arrsize(kBootArgvDisable),
     
     kBootArgvDebug,   arrsize(kBootArgvDebug),
