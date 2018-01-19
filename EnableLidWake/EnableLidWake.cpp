@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2017 syscl and corerobe. All rights reserved.
+ * Copyright (c) 2017 syscl and coderobe. All rights reserved.
+ *
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu
  *
  */
