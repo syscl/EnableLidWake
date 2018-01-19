@@ -10,7 +10,6 @@
 		CE405EC91E49DD9700AA0B3D /* libkmod.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE405EC71E49DD7100AA0B3D /* libkmod.a */; };
 		CE405ED91E4A080700AA0B3D /* plugin_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE405ED81E4A080700AA0B3D /* plugin_start.cpp */; };
 		E8E9E4252011ADD400D7CF92 /* EnableLidWake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8E9E4212011ADD300D7CF92 /* EnableLidWake.cpp */; };
-		E8E9E4262011ADD400D7CF92 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E8E9E4222011ADD400D7CF92 /* Info.plist */; };
 		E8E9E4272011ADD400D7CF92 /* EnableLidWake.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E8E9E4232011ADD400D7CF92 /* EnableLidWake.hpp */; };
 		E8E9E4282011ADD400D7CF92 /* kern_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8E9E4242011ADD400D7CF92 /* kern_start.cpp */; };
 /* End PBXBuildFile section */
@@ -90,7 +89,6 @@
 				E8E9E4222011ADD400D7CF92 /* Info.plist */,
 				E8E9E4242011ADD400D7CF92 /* kern_start.cpp */,
 			);
-			name = EnableLidWake;
 			path = EnableLidWake;
 			sourceTree = "<group>";
 		};
@@ -182,7 +180,7 @@
 		1C748C1E1C21952C0024EED2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = syscl;
 				TargetAttributes = {
 					1C748C261C21952C0024EED2 = {
@@ -212,7 +210,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8E9E4262011ADD400D7CF92 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,8 @@
 EnableLidWake Changelog
 ==============
+#### v2.1
+- Correct ```0x0a2e0008``` patches on macOS earlier than ```High Sierra```
+
 #### v2.0, v1.9 and v1.8
 - Correct indentions
 

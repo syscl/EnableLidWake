@@ -96,10 +96,10 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                 if (gKernMajorVersion == KernelVersion::Yosemite && gKernMinorVersion < 2) continue;
                 
                 // apply the patch for 0x0a2e0008
-                uint8_t azul_find[] = { 0x40, 0x00, 0x00, 0x00, 0x1e, 0x02, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
-                //                                                       ^                                           <-- High Sierra differ here 0x02
-                uint8_t azul_repl[] = { 0x40, 0x00, 0x00, 0x00, 0x0f, 0x02, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
-                //                                                ^      ^                                           <-- High Sierra differ here 0x1f and 0x02
+                uint8_t azul_find[] = { 0x40, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
+                //                                                       ^  <-- High Sierra differ here 0x02
+                uint8_t azul_repl[] = { 0x40, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x05, 0x05, 0x09, 0x01 };
+                //                                                ^      ^  <-- High Sierra differ here 0x1f and 0x02
                 // correct patch for High Sierra
                 if (gKernMajorVersion >= KernelVersion::HighSierra)
                 {
