@@ -13,8 +13,6 @@
 
 #include "EnableLidWake.hpp"
 
-KernelVersion      gKernMajorVersion = getKernelVersion();
-KernelMinorVersion gKernMinorVersion = getKernelMinorVersion();
 
 static const char *GraphicsKextCFBundleIdentifier[] = {
     "com.apple.driver.AppleIntelFramebufferAzul",
@@ -33,6 +31,7 @@ static KernelPatcher::KextInfo kextList[] {
 
 static size_t kextListSize = arrsize(kextList);
 
+// methods that are implmented here
 
 uint32_t LWEnabler::getIgPlatformId() const
 {
@@ -58,9 +57,9 @@ uint32_t LWEnabler::getIgPlatformId() const
 bool LWEnabler::init()
 {
 	LiluAPI::Error error = lilu.onKextLoad(kextList, kextListSize,
-    [](void* user, KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size) {
-        LWEnabler* patch = static_cast<LWEnabler*>(user);
-		patch->processKext(patcher, index, address, size);
+       [](void* user, KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size) {
+           LWEnabler* patch = static_cast<LWEnabler*>(user);
+           patch->processKext(patcher, index, address, size);
 	}, this);
 	
 	if (error != LiluAPI::Error::NoError)
@@ -71,8 +70,6 @@ bool LWEnabler::init()
 	
 	return true;
 }
-
-void LWEnabler::deinit() {}
 
 void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_address_t address, size_t size)
 {
@@ -159,7 +156,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
             break;
         }
     }
-	patcher.clearError();
+    patcher.clearError();
 }
 
 void LWEnabler::applyPatches(KernelPatcher& patcher, size_t index, const KextPatch* patches, size_t patchNum)

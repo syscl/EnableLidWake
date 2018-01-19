@@ -22,12 +22,20 @@ struct KextPatch {
 class LWEnabler
 {
 public:
+    // default constructor
+    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()) { }
+    // destructor
+    ~LWEnabler() { }
+    // methods that are used to process patching
 	bool init();
-	void deinit();
 	
 private:
+    const KernelVersion gKernMajorVersion;
+    const KernelMinorVersion gKernMinorVersion;
     /**
+     * Obtain current ig-platform-id
      *
+     * @return current ig-platform-id
      */
     uint32_t getIgPlatformId(void) const;
     
@@ -63,4 +71,4 @@ private:
     int progressState {ProcessingState::NothingReady};
 };
 
-#endif /*  EnableLidWake_hpp */
+#endif /* EnableLidWake_hpp */
