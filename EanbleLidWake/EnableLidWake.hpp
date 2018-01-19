@@ -9,8 +9,6 @@
 
 #include <Headers/kern_patcher.hpp>
 
-#include "syscl_lib.h"
-
 #define kCurrentKextID "org.syscl.EnableLidWake"
 
 /*

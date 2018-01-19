@@ -49,7 +49,6 @@
 		CE405ED21E49F9FC00AA0B3D /* kern_api.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kern_api.hpp; sourceTree = "<group>"; };
 		CE405ED81E4A080700AA0B3D /* plugin_start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plugin_start.cpp; sourceTree = "<group>"; };
 		CE405EDA1E4A080F00AA0B3D /* plugin_start.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = plugin_start.hpp; sourceTree = "<group>"; };
-		E80D71A41EED2F0200EE62D6 /* syscl_lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = syscl_lib.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +88,6 @@
 				A0DB59A61ED4C9A300BE2727 /* EnableLidWake.cpp */,
 				1C748C2C1C21952C0024EED2 /* kern_start.cpp */,
 				1C748C2E1C21952C0024EED2 /* Info.plist */,
-				E80D71A41EED2F0200EE62D6 /* syscl_lib.h */,
 			);
 			name = EnableLidWake;
 			path = EanbleLidWake;
