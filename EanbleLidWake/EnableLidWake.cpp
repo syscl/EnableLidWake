@@ -35,6 +35,7 @@ static KernelPatcher::KextInfo kextList[] {
 
 static size_t kextListSize = getArrayLength(kextList);
 
+
 bool LidWake::init()
 {
 	LiluAPI::Error error = lilu.onKextLoad(kextList, kextListSize,

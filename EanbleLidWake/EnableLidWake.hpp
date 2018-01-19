@@ -61,7 +61,7 @@ private:
 			EverythingDone = 1,
 		};
 	};
-    int progressState {ProcessingState::NothingReady};
+    auto progressState {ProcessingState::NothingReady};
 };
 
 #endif

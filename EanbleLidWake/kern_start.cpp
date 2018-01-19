@@ -3,8 +3,7 @@
  *
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu/
  *
- * This work is licensed under the Creative Commons Attribution-NonCommercial
- * 4.0 Unported License => http://creativecommons.org/licenses/by-nc/4.0
+ * Credit also corerobe for his codebase
  */
 
 #include <Headers/plugin_start.hpp>
