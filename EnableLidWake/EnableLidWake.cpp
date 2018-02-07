@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 syscl and coderobe. All rights reserved.
+ * Copyright (c) 2017-2018 syscl and coderobe. All rights reserved.
  *
  * Courtesy to vit9696's Lilu => https://github.com/vit9696/Lilu
  *
@@ -13,20 +13,17 @@
 
 #include "EnableLidWake.hpp"
 
-
-static const char *GraphicsKextCFBundleIdentifier[] = {
-    "com.apple.driver.AppleIntelFramebufferAzul",
-    "com.apple.driver.AppleIntelSKLGraphicsFramebuffer"
-};
-
-static const char *GraphicKextPath[] = {
-    "/System/Library/Extensions/AppleIntelFramebufferAzul.kext/Contents/MacOS/AppleIntelFramebufferAzul",
-    "/System/Library/Extensions/AppleIntelSKLGraphicsFramebuffer.kext/Contents/MacOS/AppleIntelSKLGraphicsFramebuffer"
-};
+static const char *kextHSWFb[] { "/System/Library/Extensions/AppleIntelFramebufferAzul.kext/Contents/MacOS/AppleIntelFramebufferAzul" };
+static const char *kextHSWFbId { "com.apple.driver.AppleIntelFramebufferAzul" };
+static const char *kextSKLFb[] { "/System/Library/Extensions/AppleIntelSKLGraphicsFramebuffer.kext/Contents/MacOS/AppleIntelSKLGraphicsFramebuffer" };
+static const char *kextSKLFbId { "com.apple.driver.AppleIntelSKLGraphicsFramebuffer" };
+static const char *kextKBLFb[] { "/System/Library/Extensions/AppleIntelKBLGraphicsFramebuffer.kext/Contents/MacOS/AppleIntelKBLGraphicsFramebuffer" };
+static const char *kextKBLFbId { "com.apple.driver.AppleIntelKBLGraphicsFramebuffer" };
 
 static KernelPatcher::KextInfo kextList[] {
-    { GraphicsKextCFBundleIdentifier[kHSW], &GraphicKextPath[kHSW], 1, {true}, {}, KernelPatcher::KextInfo::Unloaded },
-    { GraphicsKextCFBundleIdentifier[kSKL], &GraphicKextPath[kSKL], 1, {true}, {}, KernelPatcher::KextInfo::Unloaded }
+    { kextHSWFbId, kextHSWFb, arrsize(kextHSWFb), {true}, {}, KernelPatcher::KextInfo::Unloaded },
+    { kextSKLFbId, kextSKLFb, arrsize(kextSKLFb), {true}, {}, KernelPatcher::KextInfo::Unloaded },
+    { kextKBLFbId, kextKBLFb, arrsize(kextKBLFb), {true}, {}, KernelPatcher::KextInfo::Unloaded },
 };
 
 static size_t kextListSize = arrsize(kextList);
@@ -38,13 +35,18 @@ uint32_t LWEnabler::getIgPlatformId() const
     uint32_t platform = 0;
     const char *tree[] {"AppleACPIPCI", "IGPU"};
     auto sect = WIOKit::findEntryByPrefix("/AppleACPIPlatformExpert", "PCI", gIOServicePlane);
-    for (size_t i = 0; sect && i < arrsize(tree); i++) {
+    for (size_t i = 0; sect && i < arrsize(tree); i++)
+    {
         sect = WIOKit::findEntryByPrefix(sect, tree[i], gIOServicePlane);
-        if (sect && i+1 == arrsize(tree)) {
-            if (WIOKit::getOSDataValue(sect, "AAPL,ig-platform-id", platform)) {
+        if (sect && i+1 == arrsize(tree))
+        {
+            if (WIOKit::getOSDataValue(sect, "AAPL,ig-platform-id", platform))
+            {
                 DBGLOG(kCurrentKextID, "found IGPU with ig-platform-id 0x%08x", platform);
                 return platform;
-            } else {
+            }
+            else
+            {
                 SYSLOG(kCurrentKextID, "found IGPU with missing ig-platform-id, assuming old");
             }
         }
@@ -86,7 +88,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
         //
         // Enable lid wake for Haswell(Azul) platform
         //
-        if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kHSW]))
+        if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, kextHSWFbId))
         {
             SYSLOG(kCurrentKextID, "found %s", kextList[i].id);
             
@@ -138,7 +140,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
         //
         // Enable lid wake for Skylake(skl) platform
         //
-        if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, GraphicsKextCFBundleIdentifier[kSKL]))
+        if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, kextSKLFbId))
         {
             SYSLOG(kCurrentKextID, "found %s", kextList[i].id);
             if (gIgPlatformId != static_cast<uint32_t>(0x19260004)) return;

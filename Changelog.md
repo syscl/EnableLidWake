@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v2.2
+
+- Minor cosmetic change
+
 #### v2.1
 - Correct ```0x0a2e0008``` patches on macOS earlier than ```High Sierra```
 

@@ -14,6 +14,6 @@ Place it under any bootloader injection folder or ```/Library/Extensions``` then
 ####  Credits
 - vit9696 for his Lilu - a kext that patches kext and processes.
 - coderobe for his codebase
-- syscl for his lid wake patch
+- syscl for his lid wake patches
 
-Copyright (c) 2018 syscl and coderobe. All rights reserved.
+Copyright (c) 2017-2018 syscl and coderobe. All rights reserved.
