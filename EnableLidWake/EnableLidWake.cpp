@@ -174,22 +174,22 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                         if (gIgPlatformId == static_cast<uint32_t>(0x0a26000a) ||
                             gIgPlatformId == static_cast<uint32_t>(0x0a2e000a)) {
                             // this two platform share the same patch pattern
-                            if (*(repl + 4) == 0x1e) {
+                            memset(repl+4, 0x1e, sizeof(uint8_t));
+                            if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
                                 // already patch? we should stop here due to the
                                 // internal display has been enabled after sleep
                                 SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                                 return;
-                            }
-                            memset(repl+4, 0x1e, sizeof(uint8_t));
+                            }                            
                         } else {
                             // 0x0a2e0008 use 0x1f
-                            if (*(repl+4) == 0x1f) {
+                            memset(repl+4, 0x1f, sizeof(uint8_t));
+                            if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
                                 // already patch? we should stop here due to the
                                 // internal display has been enabled after sleep
                                 SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                                 return;
                             }
-                            memset(repl+4, 0x1f, sizeof(uint8_t));
                         }
                         SYSLOG(kThisKextID, "binary patches for internal display have been generated.");
                         KextPatch azul_patch_info {

@@ -1,7 +1,7 @@
 EnableLidWake Changelog
 ==============
-### v2.6 and v2.5
-- Improved performance by  ```memset()``` which is usually highly optimized for the target architecture. It might be implemeted as a rep stosq loop, or use SSE2 (possibly using non-temporal writes for large chunks in order to avoid polluting caches).
+### v2.7, v2.6 and v2.5
+- Improved performance by  ```memset()``` and ```memcmp()``` which is usually highly optimized for the target architecture. It might be implemeted as a rep stosq loop, or use SSE2 (possibly using non-temporal writes for large chunks in order to avoid polluting caches).
 
 ### v2.4
 
