@@ -9,7 +9,7 @@
 
 #include <Headers/kern_patcher.hpp>
 
-#define kCurrentKextID "org.syscl.EnableLidWake"
+#define kThisKextID "org.syscl.EnableLidWake"
 
 enum { kHSW = 0, kSKL, kKBL };
 
@@ -23,7 +23,8 @@ class LWEnabler
 {
 public:
     // default constructor
-    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()) { }
+    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()), isFixablePlatform(false) { }
+    
     // destructor
     ~LWEnabler() { }
     // methods that are used to process patching
@@ -32,6 +33,10 @@ public:
 private:
     const KernelVersion gKernMajorVersion;
     const KernelMinorVersion gKernMinorVersion;
+    uint32_t gIgPlatformId;
+    // reverse order of ig-platform-id
+    uint8_t rIgPlatformId[4] {};
+    bool isFixablePlatform;
 
     /**
      * Obtain current ig-platform-id
@@ -39,6 +44,12 @@ private:
      * @return current ig-platform-id
      */
     uint32_t getIgPlatformId(void) const;
+    
+    /**
+     * Set up ig-platform-id information
+     */
+    void configIgPlatform(void);
+    
     
 	/**
 	 *  Patch kext if needed and prepare other patches
