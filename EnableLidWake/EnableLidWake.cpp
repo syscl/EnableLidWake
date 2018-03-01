@@ -187,6 +187,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                                 // already patch? we should stop here due to the
                                 // internal display has been enabled after sleep
                                 SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                                return;
                             }
                             *(repl+4) = 0x1f;
                         }
