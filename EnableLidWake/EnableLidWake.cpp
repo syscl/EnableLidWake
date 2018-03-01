@@ -180,7 +180,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                                 SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                                 return;
                             }
-                            *(repl+4) = 0x1e;
+                            memset(repl+4, 0x1e, sizeof(uint8_t));
                         } else {
                             // 0x0a2e0008 use 0x1f
                             if (*(repl+4) == 0x1f) {
@@ -189,7 +189,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                                 SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                                 return;
                             }
-                            *(repl+4) = 0x1f;
+                            memset(repl+4, 0x1f, sizeof(uint8_t));
                         }
                         SYSLOG(kThisKextID, "binary patches for internal display have been generated.");
                         KextPatch azul_patch_info {
