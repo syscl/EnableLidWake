@@ -77,45 +77,40 @@ bool LWEnabler::init()
 void LWEnabler::configIgPlatform()
 {
     gIgPlatformId = getIgPlatformId();
-    if (gIgPlatformId == static_cast<uint32_t>(0x19260004)||
-        gIgPlatformId == static_cast<uint32_t>(0x0a26000a)||
-        gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)||
-        gIgPlatformId == static_cast<uint32_t>(0x0a2e000a)) {
-        // It is a fixable platform
-        isFixablePlatform = true;
-        switch (gIgPlatformId) {
-            case 0x19260004: {
-                memset(rIgPlatformId+0, 0x04, sizeof(uint8_t));
-                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-                memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
-                memset(rIgPlatformId+3, 0x19, sizeof(uint8_t));
-                break;
-            }
-            case 0x0a26000a: {
-                memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
-                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-                memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
-                memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
-                break;
-            }
-            case 0x0a2e0008: {
-                memset(rIgPlatformId+0, 0x08, sizeof(uint8_t));
-                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-                memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
-                memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
-                break;
-            }
-            case 0x0a2e000a: {
-                memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
-                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-                memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
-                memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
-                break;
-            }
+    switch (gIgPlatformId) {
+        case 0x19260004: {
+            memset(rIgPlatformId+0, 0x04, sizeof(uint8_t));
+            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+            memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
+            memset(rIgPlatformId+3, 0x19, sizeof(uint8_t));
+            break;
         }
-    } else {
-        SYSLOG(kThisKextID, "0x%08x is not fixable, abort.", gIgPlatformId);
-        return;
+        case 0x0a26000a: {
+            memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
+            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+            memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
+            memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
+            break;
+        }
+        case 0x0a2e0008: {
+            memset(rIgPlatformId+0, 0x08, sizeof(uint8_t));
+            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+            memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
+            memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
+            break;
+        }
+        case 0x0a2e000a: {
+            memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
+            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+            memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
+            memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
+            break;
+        }
+        default: {
+            SYSLOG(kThisKextID, "0x%08x is not fixable, abort.", gIgPlatformId);
+            isFixablePlatform = false;
+            break;
+        }
     }
 }
 
@@ -151,7 +146,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                 // The real patch place should be very close
                 // MaxSearchSize aka PAGE_SIZE is fairly enough
                 auto endOff = curOff + PAGE_SIZE;
-                // The framebuffer size
+                // Max replace size
                 static constexpr size_t MaxReplSize {16};
                 // Search the specific ig-platform-id in the neighbourhood
                 while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))
@@ -210,7 +205,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                 // The real patch place should be very close
                 // MaxSearchSize aka PAGE_SIZE is fairly enough
                 auto endOff = curOff + PAGE_SIZE;
-                // The framebuffer size
+                // Max replace size
                 static constexpr size_t MaxReplSize {16};
                 // Search the specific ig-platform-id in the neighbourhood
                 while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))

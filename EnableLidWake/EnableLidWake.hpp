@@ -23,7 +23,7 @@ class LWEnabler
 {
 public:
     // default constructor
-    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()), isFixablePlatform(false) { }
+    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()), isFixablePlatform(true) { }
     
     // destructor
     ~LWEnabler() { }

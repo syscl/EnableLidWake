@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v3.2
+
+- Simplified the logic in ```configPlatform()```
+
 ### v3.1
 
 - Dynamically generate patches from current loaded framebuffer (0x19260004) in memory
