@@ -85,31 +85,31 @@ void LWEnabler::configIgPlatform()
         isFixablePlatform = true;
         switch (gIgPlatformId) {
             case 0x19260004: {
-                rIgPlatformId[0] = 0x04;
-                rIgPlatformId[1] = 0x00;
-                rIgPlatformId[2] = 0x26;
-                rIgPlatformId[3] = 0x19;
+                memset(rIgPlatformId+0, 0x04, sizeof(uint8_t));
+                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+                memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
+                memset(rIgPlatformId+3, 0x19, sizeof(uint8_t));
                 break;
             }
             case 0x0a26000a: {
-                rIgPlatformId[0] = 0x0a;
-                rIgPlatformId[1] = 0x00;
-                rIgPlatformId[2] = 0x26;
-                rIgPlatformId[3] = 0x0a;
+                memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
+                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+                memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
+                memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
                 break;
             }
             case 0x0a2e0008: {
-                rIgPlatformId[0] = 0x08;
-                rIgPlatformId[1] = 0x00;
-                rIgPlatformId[2] = 0x2e;
-                rIgPlatformId[3] = 0x0a;
+                memset(rIgPlatformId+0, 0x08, sizeof(uint8_t));
+                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+                memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
+                memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
                 break;
             }
             case 0x0a2e000a: {
-                rIgPlatformId[0] = 0x0a;
-                rIgPlatformId[1] = 0x00;
-                rIgPlatformId[2] = 0x2e;
-                rIgPlatformId[3] = 0x0a;
+                memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
+                memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
+                memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
+                memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
                 break;
             }
         }
