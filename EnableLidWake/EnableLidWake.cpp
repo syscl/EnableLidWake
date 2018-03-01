@@ -130,11 +130,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
         if (!(progressState & ProcessingState::EverythingDone) &&
             memcmp(kextList[i].id, kextHSWFbId, strlen(kextHSWFbId)) == 0) {
             SYSLOG(kThisKextID, "found %s", kextList[i].id);
-            // 10.10.1- do not require any internal display patches for 0x0a2e0008
-            // but it's unclear that if 0x0a26000a and 0x0a2e000a require this
-            // type of skip or not
-            if (gKernMajorVersion == KernelVersion::Yosemite && gKernMinorVersion < 2 &&
-                gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)) continue;
+            
             mach_vm_address_t address = patcher.solveSymbol(index, "_ltDriveTable");
             if (address) {
                 SYSLOG(kThisKextID, "obtained _ltDriveTable");
@@ -174,6 +170,9 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     // a more nature way to fix the lid wake issue by
                     // copying back to the framebuffer in memory instead of
                     // invoking the applyLookupPatch()
+                    // note: we didn't require to check kernel version
+                    // due to the fact that we don't care about which
+                    // version of kext will be loaded
                     lilu_os_memcpy(curOff, repl, MaxReplSize);
                     SYSLOG(kThisKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                     progressState |= ProcessingState::EverythingDone;
@@ -230,6 +229,9 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     // a more nature way to fix the lid wake issue by
                     // copying back to the framebuffer in memory instead of
                     // invoking the applyLookupPatch()
+                    // note: we didn't require to check kernel version
+                    // due to the fact that we don't care about which
+                    // version of kext will be loaded
                     lilu_os_memcpy(curOff, repl, MaxReplSize);
                     SYSLOG(kThisKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                     progressState |= ProcessingState::EverythingDone;

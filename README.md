@@ -1,7 +1,7 @@
 EnableLidWake
 ====
 
-This kext (actually Lilu friend) provides you the ability to fix the lid wake issue after resuming from sleep on macOS. Comparing the previous binary patch, new ```EnableLidWake (v3.4+) ``` gives you a more natural and effective way to fix the internal display sleep issue in memory.
+This kext (actually Lilu friend) provides you the ability to fix the lid wake issue after resuming from sleep on macOS. Comparing the previous binary patch, ```EnableLidWake (v3.4+) ``` gives you a more natural, effective and general way to fix the internal display sleep issue in memory.
 
 
 ####  Requriments

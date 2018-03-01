@@ -11,12 +11,6 @@
 
 #define kThisKextID "org.syscl.EnableLidWake"
 
-struct KextPatch {
-    KernelPatcher::LookupPatch patch;
-    uint32_t minKernel;
-    uint32_t maxKernel;
-};
-
 class LWEnabler
 {
 public:
@@ -29,6 +23,9 @@ public:
     bool init();
 	
 private:
+    // Do we still need to check kernel version just in case? As of v3.5,
+    // we no longer rely on which version of kext, we only care if
+    // the pattern can be found.
     const KernelVersion gKernMajorVersion;
     const KernelMinorVersion gKernMinorVersion;
     uint32_t gIgPlatformId;

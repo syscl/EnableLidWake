@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v3.5
+
+- Major clean up due to we get rid of old style (unreliable) matching against kernel version patch
+
 ### v3.4
 
 - A more natural way to patch the framebuffer in memory (```copy back```) for ```Skylake``` platform
