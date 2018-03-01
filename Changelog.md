@@ -1,5 +1,8 @@
 EnableLidWake Changelog
 ==============
+### v2.5
+- Improved performance by  ```memset()```  which is usually highly optimized for the target architecture. It might be implemeted as a rep stosq loop, or use SSE2 (possibly using non-temporal writes for large chunks in order to avoid polluting caches).
+
 ### v2.4
 
 - Append return for ```0x0a2e0008``` if the framebuffer has been patched already
