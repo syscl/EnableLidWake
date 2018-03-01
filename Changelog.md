@@ -1,5 +1,10 @@
 EnableLidWake Changelog
 ==============
+### v2.3
+
+- Dynamically generate patches from current loaded framebuffer in memory
+- Code rework
+
 ### v2.2
 
 - Minor cosmetic change
