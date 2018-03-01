@@ -137,77 +137,72 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
         if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, kextHSWFbId))
         {
             SYSLOG(kThisKextID, "found %s", kextList[i].id);
-            
-            if (gIgPlatformId == static_cast<uint32_t>(0x0a26000a) ||
-                gIgPlatformId == static_cast<uint32_t>(0x0a2e0008) ||
-                gIgPlatformId == static_cast<uint32_t>(0x0a2e000a)) {
-                // 10.10.1- do not require any internal display patches for 0x0a2e0008
-                // but it's unclear that if 0x0a26000a and 0x0a2e000a require this
-                // type of skip or not
-                if (gKernMajorVersion == KernelVersion::Yosemite && gKernMinorVersion < 2 &&
-                    gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)) continue;
-                mach_vm_address_t address = patcher.solveSymbol(index, "_ltDriveTable");
-                if (address) {
-                    SYSLOG(kThisKextID, "obtained _ltDriveTable");
-                    patcher.clearError();
-
-                    // Lookup the ig-platform-id specific framebuffer data
-                    auto curOff = reinterpret_cast<uint8_t *>(address);
-                    // The real patch place should be very close
-                    // MaxSearchSize aka PAGE_SIZE is fairly enough
-                    auto endOff = curOff + PAGE_SIZE;
-                    // The framebuffer size
-                    static constexpr size_t MaxReplSize {16};
-                    // Search the specific ig-platform-id in the neighbourhood
-                    while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))
-                        curOff++;
-                    // verify search
-                    if (curOff < endOff) {
-                        DBGLOG(kThisKextID, "found platform-id (0x%08x) at framebuffer info data segment", gIgPlatformId);
-                        // now let's generate the patch for it
-                        uint8_t find[MaxReplSize] {};
-                        uint8_t repl[MaxReplSize] {};
-                        lilu_os_memcpy(find, curOff+84, MaxReplSize);
-                        lilu_os_memcpy(repl, curOff+84, MaxReplSize);
-                        DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *find, *(find+1), *(find+2), *(find+3), *(find+4));
-                        // apply platform specific patch pattern
-                        if (gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)) {
-                            // 0x0a2e0008 use 0x1f
-                            memset(repl+4, 0x1f, sizeof(uint8_t));
-                            if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
-                                // already patch? we should stop here due to the
-                                // internal display has been enabled after sleep
-                                SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
-                                return;
-                            }
-                        } else {
-                            // this two platforms share the same patch pattern 0x1e
-                            memset(repl+4, 0x1e, sizeof(uint8_t));
-                            if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
-                                // already patch? we should stop here due to the
-                                // internal display has been enabled after sleep
-                                SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
-                                return;
-                            }
+            // 10.10.1- do not require any internal display patches for 0x0a2e0008
+            // but it's unclear that if 0x0a26000a and 0x0a2e000a require this
+            // type of skip or not
+            if (gKernMajorVersion == KernelVersion::Yosemite && gKernMinorVersion < 2 &&
+                gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)) continue;
+            mach_vm_address_t address = patcher.solveSymbol(index, "_ltDriveTable");
+            if (address) {
+                SYSLOG(kThisKextID, "obtained _ltDriveTable");
+                patcher.clearError();
+                
+                // Lookup the ig-platform-id specific framebuffer data
+                auto curOff = reinterpret_cast<uint8_t *>(address);
+                // The real patch place should be very close
+                // MaxSearchSize aka PAGE_SIZE is fairly enough
+                auto endOff = curOff + PAGE_SIZE;
+                // The framebuffer size
+                static constexpr size_t MaxReplSize {16};
+                // Search the specific ig-platform-id in the neighbourhood
+                while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))
+                    curOff++;
+                // verify search
+                if (curOff < endOff) {
+                    DBGLOG(kThisKextID, "found platform-id (0x%08x) at framebuffer info data segment", gIgPlatformId);
+                    // now let's generate the patch for it
+                    uint8_t find[MaxReplSize] {};
+                    uint8_t repl[MaxReplSize] {};
+                    lilu_os_memcpy(find, curOff+84, MaxReplSize);
+                    lilu_os_memcpy(repl, curOff+84, MaxReplSize);
+                    DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *find, *(find+1), *(find+2), *(find+3), *(find+4));
+                    // apply platform specific patch pattern
+                    if (gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)) {
+                        // 0x0a2e0008 use 0x1f
+                        memset(repl+4, 0x1f, sizeof(uint8_t));
+                        if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
+                            // already patch? we should stop here due to the
+                            // internal display has been enabled after sleep
+                            SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                            return;
                         }
-                        SYSLOG(kThisKextID, "binary patches for internal display have been generated.");
-                        KextPatch azul_patch_info {
-                            { &kextList[i], find, repl, sizeof(find), 1 },
-                            KernelVersion::Yosemite, KernelVersion::HighSierra
-                        };
-                        
-                        applyPatches(patcher, index, &azul_patch_info, 1);
-                        SYSLOG(kThisKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
-                        progressState |= ProcessingState::EverythingDone;
-                        
                     } else {
-                        SYSLOG(kThisKextID, "cannot find platform-id at %s", *kextHSWFb);
-                        return;
+                        // this two platforms share the same patch pattern 0x1e
+                        memset(repl+4, 0x1e, sizeof(uint8_t));
+                        if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
+                            // already patch? we should stop here due to the
+                            // internal display has been enabled after sleep
+                            SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                            return;
+                        }
                     }
+                    SYSLOG(kThisKextID, "binary patches for internal display have been generated.");
+                    KextPatch azul_patch_info {
+                        { &kextList[i], find, repl, sizeof(find), 1 },
+                        KernelVersion::Yosemite, KernelVersion::HighSierra
+                    };
+                    
+                    applyPatches(patcher, index, &azul_patch_info, 1);
+                    SYSLOG(kThisKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                    progressState |= ProcessingState::EverythingDone;
+                    
                 } else {
-                    SYSLOG(kThisKextID, "cannot find _ltDriveTable");
+                    SYSLOG(kThisKextID, "cannot find platform-id at %s", *kextHSWFb);
                     return;
                 }
+            } else {
+                SYSLOG(kThisKextID, "cannot find _ltDriveTable");
+                return;
             }
         }
         //
@@ -216,8 +211,7 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
         if (!(progressState & ProcessingState::EverythingDone) && !strcmp(kextList[i].id, kextSKLFbId))
         {
             SYSLOG(kThisKextID, "found %s", kextList[i].id);
-            if (gIgPlatformId != static_cast<uint32_t>(0x19260004)) return;
-            
+            // it must be 0x19260004 due to the previous isFixablePlatform checking
             const uint8_t skl_find[] = { 0x0a, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
             const uint8_t skl_repl[] = { 0x0f, 0x0b, 0x03, 0x00, 0x00, 0x07, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
             KextPatch skl_patch_info {
