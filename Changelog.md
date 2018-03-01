@@ -1,5 +1,10 @@
 EnableLidWake Changelog
 ==============
+### v3.1
+
+- Dynamically generate patches from current loaded framebuffer (0x19260004) in memory
+- Optimized speed a bit by using ```memcmp()``` instead of  ```strcmp()```
+
 ### v3.0, v2.9 and v2.8
 
 - Unified and simplified the code blocks (speed up a bit)
@@ -13,7 +18,7 @@ EnableLidWake Changelog
 
 ### v2.3
 
-- Dynamically generate patches from current loaded framebuffer in memory
+- Dynamically generate patches from current loaded ```Haswell``` framebuffer in memory
 - Code rework
 
 ### v2.2
