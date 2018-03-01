@@ -1,6 +1,6 @@
 EnableLidWake Changelog
 ==============
-### v2.8
+### v2.9 and v2.8
 
 - Simplified the logic (speed up a bit) and reduced code lines
 
