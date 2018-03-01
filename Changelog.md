@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v3.4
+
+- A more natural way to patch the framebuffer in memory (```copy back```) for ```Skylake``` platform
+
 ### v3.3
 
 - A more natural way to patch the framebuffer in memory (```copy back```) for ```Haswell``` platform

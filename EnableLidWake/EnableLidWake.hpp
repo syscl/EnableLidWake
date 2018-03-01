@@ -11,8 +11,6 @@
 
 #define kThisKextID "org.syscl.EnableLidWake"
 
-enum { kHSW = 0, kSKL, kKBL };
-
 struct KextPatch {
     KernelPatcher::LookupPatch patch;
     uint32_t minKernel;
@@ -52,7 +50,7 @@ private:
     
     
 	/**
-	 *  Patch kext if needed and prepare other patches
+	 *  Patch framebuffer in memory
 	 *
 	 *  @param patcher KernelPatcher instance
 	 *  @param index   kinfo handle

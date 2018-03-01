@@ -165,7 +165,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     memset(repl, gIgPlatformId == 0x0a2e0008 ? 0x1f : 0x1e, MaxReplSize);
                     if (memcmp(repl, curOff, MaxReplSize) == 0) {
                         // already patch due to the kext has been
-                        // patched on the cache? we should stop here
+                        // patched in the cache? we should stop here
                         SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                         return;
                     }
@@ -204,7 +204,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                 // MaxSearchSize aka PAGE_SIZE is fairly enough
                 auto endOff = curOff + PAGE_SIZE;
                 // Max replace size
-                static constexpr size_t MaxReplSize {16};
+                static constexpr size_t MaxReplSize {sizeof(uint8_t)};
                 // Search the specific ig-platform-id in the neighbourhood
                 while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))
                     curOff++;
@@ -212,28 +212,25 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                 if (curOff < endOff) {
                     DBGLOG(kThisKextID, "found platform-id (0x%08x) at framebuffer info data segment", gIgPlatformId);
                     // now let's generate the patch for it
-                    uint8_t find[MaxReplSize] {};
+                    // target offset should @ +97
+                    curOff += 97;
                     uint8_t repl[MaxReplSize] {};
-                    lilu_os_memcpy(find, curOff+96, MaxReplSize);
-                    lilu_os_memcpy(repl, curOff+96, MaxReplSize);
-                    DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *find, *(find+1), *(find+2), *(find+3), *(find+4));
+                    lilu_os_memcpy(repl, curOff, MaxReplSize);
+                    DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *curOff, *(curOff+1), *(curOff+2), *(curOff+3), *(curOff+4));
                     // apply platform specific patch pattern
                     // 0x19260004 uses 0x0f
-                    memset(repl+1, 0x0f, sizeof(uint8_t));
-                    if (memcmp(repl+1, find+1, sizeof(uint8_t)) == 0) {
+                    memset(repl, 0x0f, MaxReplSize);
+                    if (memcmp(repl, curOff, MaxReplSize) == 0) {
                         // already patch due to the kext has been
-                        // patched on the cache? we should stop here
+                        // patched in the cache? we should stop here
                         SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                         return;
                     }
                     SYSLOG(kThisKextID, "binary patches for internal display have been generated.");
-                    /*
-                    KextPatch patchData {
-                        { &kextList[i], find, repl, sizeof(find), 1 },
-                        KernelVersion::ElCapitan, KernelVersion::HighSierra
-                    };
-                    
-                    applyPatches(patcher, index, &patchData, 1);*/
+                    // a more nature way to fix the lid wake issue by
+                    // copying back to the framebuffer in memory instead of
+                    // invoking the applyLookupPatch()
+                    lilu_os_memcpy(curOff, repl, MaxReplSize);
                     SYSLOG(kThisKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                     progressState |= ProcessingState::EverythingDone;
                     break;
