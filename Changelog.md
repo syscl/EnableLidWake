@@ -1,5 +1,10 @@
 EnableLidWake Changelog
 ==============
+### v3.3
+
+- A more natural way to patch the framebuffer in memory (```copy back```) for ```Haswell``` platform
+- Get rid of ```applyLookupPatch()``` invoking
+
 ### v3.2
 
 - Simplified the logic in ```configPlatform()```
