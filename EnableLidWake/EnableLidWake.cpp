@@ -171,19 +171,18 @@ void LWEnabler::processKext(KernelPatcher& patcher, size_t index, mach_vm_addres
                         lilu_os_memcpy(repl, curOff+84, MaxReplSize);
                         DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *find, *(find+1), *(find+2), *(find+3), *(find+4));
                         // apply platform specific patch pattern
-                        if (gIgPlatformId == static_cast<uint32_t>(0x0a26000a) ||
-                            gIgPlatformId == static_cast<uint32_t>(0x0a2e000a)) {
-                            // this two platform share the same patch pattern
-                            memset(repl+4, 0x1e, sizeof(uint8_t));
+                        if (gIgPlatformId == static_cast<uint32_t>(0x0a2e0008)) {
+                            // 0x0a2e0008 use 0x1f
+                            memset(repl+4, 0x1f, sizeof(uint8_t));
                             if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
                                 // already patch? we should stop here due to the
                                 // internal display has been enabled after sleep
                                 SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
                                 return;
-                            }                            
+                            }
                         } else {
-                            // 0x0a2e0008 use 0x1f
-                            memset(repl+4, 0x1f, sizeof(uint8_t));
+                            // this two platforms share the same patch pattern 0x1e
+                            memset(repl+4, 0x1e, sizeof(uint8_t));
                             if (memcmp(repl+4, find+4, sizeof(uint8_t)) == 0) {
                                 // already patch? we should stop here due to the
                                 // internal display has been enabled after sleep
