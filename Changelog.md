@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v2.4
+
+- Append return for ```0x0a2e0008``` if the framebuffer has been patched already
+
 ### v2.3
 
 - Dynamically generate patches from current loaded framebuffer in memory
