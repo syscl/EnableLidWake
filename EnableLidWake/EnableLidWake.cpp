@@ -85,7 +85,7 @@ void LWEnabler::configIgPlatform()
         case 0x0a2e0008:
         case 0x0a2e000a: {
             lilu_os_memcpy(reinterpret_cast<uint32_t *>(rIgPlatformId), &gIgPlatformId, sizeof(uint32_t));
-            SYSLOG(kThisKextID, "reverse order of ig-platform-id: 0x%02x, 0x%02x, 0x%02x, 0x%02x", *rIgPlatformId, *(rIgPlatformId+1), *(rIgPlatformId+2), *(rIgPlatformId+3));
+            DBGLOG(kThisKextID, "reverse order of ig-platform-id: 0x%02x, 0x%02x, 0x%02x, 0x%02x", *rIgPlatformId, *(rIgPlatformId+1), *(rIgPlatformId+2), *(rIgPlatformId+3));
             break;
         }
         default: {
