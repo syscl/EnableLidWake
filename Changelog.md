@@ -1,5 +1,10 @@
 EnableLidWake Changelog
 ==============
+### v3.6
+
+- Prevent configIgPlatform from invoking multiple times
+- Simplified configIgPlatform
+
 ### v3.5
 
 - Major clean up due to we get rid of old style (unreliable) matching against kernel version patch
