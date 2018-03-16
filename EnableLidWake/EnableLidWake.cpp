@@ -75,34 +75,17 @@ bool LWEnabler::init()
 
 void LWEnabler::configIgPlatform()
 {
+    // Once ig-platform has set, we will not
+    // invoke this routine again
+    isIgPlatformSet = true;
     gIgPlatformId = getIgPlatformId();
     switch (gIgPlatformId) {
-        case 0x19260004: {
-            memset(rIgPlatformId+0, 0x04, sizeof(uint8_t));
-            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-            memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
-            memset(rIgPlatformId+3, 0x19, sizeof(uint8_t));
-            break;
-        }
-        case 0x0a26000a: {
-            memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
-            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-            memset(rIgPlatformId+2, 0x26, sizeof(uint8_t));
-            memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
-            break;
-        }
-        case 0x0a2e0008: {
-            memset(rIgPlatformId+0, 0x08, sizeof(uint8_t));
-            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-            memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
-            memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
-            break;
-        }
+        case 0x19260004:
+        case 0x0a26000a:
+        case 0x0a2e0008:
         case 0x0a2e000a: {
-            memset(rIgPlatformId+0, 0x0a, sizeof(uint8_t));
-            memset(rIgPlatformId+1, 0x00, sizeof(uint8_t));
-            memset(rIgPlatformId+2, 0x2e, sizeof(uint8_t));
-            memset(rIgPlatformId+3, 0x0a, sizeof(uint8_t));
+            lilu_os_memcpy(reinterpret_cast<uint32_t *>(rIgPlatformId), &gIgPlatformId, sizeof(uint32_t));
+            SYSLOG(kThisKextID, "reverse order of ig-platform-id: 0x%02x, 0x%02x, 0x%02x, 0x%02x", *rIgPlatformId, *(rIgPlatformId+1), *(rIgPlatformId+2), *(rIgPlatformId+3));
             break;
         }
         default: {
@@ -117,7 +100,9 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
 {
     // set ig-platform information first
     // private member, not a setter
-    configIgPlatform();
+    if (!isIgPlatformSet)
+        configIgPlatform();
+    
     // check if we already done here
     // or if the platform cannot be fixed
     if (progressState == ProcessingState::EverythingDone || !isFixablePlatform) return;

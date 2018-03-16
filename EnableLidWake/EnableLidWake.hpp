@@ -15,7 +15,7 @@ class LWEnabler
 {
 public:
     // default constructor
-    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()), isFixablePlatform(true) { }
+    LWEnabler() : gKernMajorVersion(getKernelVersion()), gKernMinorVersion(getKernelMinorVersion()), isFixablePlatform(true), isIgPlatformSet(false) { }
     
     // destructor
     ~LWEnabler() { }
@@ -32,6 +32,7 @@ private:
     // reverse order of ig-platform-id
     uint8_t rIgPlatformId[4] {};
     bool isFixablePlatform;
+    bool isIgPlatformSet;
 
     /**
      * Obtain current ig-platform-id
