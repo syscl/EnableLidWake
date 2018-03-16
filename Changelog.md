@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v3.7
+
+- Use ```DBGLOG``` instead of ```SYSLOG``` for configIgPlatform
+
 ### v3.6
 
 - Prevent configIgPlatform from invoking multiple times
