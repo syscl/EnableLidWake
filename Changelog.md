@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v3.8
+
+- Implemented lid wake for KabyLake (KBL) platform
+
 ### v3.7
 
 - Use ```DBGLOG``` instead of ```SYSLOG``` for configIgPlatform

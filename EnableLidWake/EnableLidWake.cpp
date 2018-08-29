@@ -33,20 +33,15 @@ static size_t kextListSize = arrsize(kextList);
 uint32_t LWEnabler::getIgPlatformId() const
 {
     uint32_t platform = 0;
-    const char *tree[] {"AppleACPIPCI", "IGPU"};
+    const char *tree[] { "AppleACPIPCI", "IGPU" };
     auto sect = WIOKit::findEntryByPrefix("/AppleACPIPlatformExpert", "PCI", gIOServicePlane);
-    for (size_t i = 0; sect && i < arrsize(tree); i++)
-    {
+    for (size_t i = 0; sect && i < arrsize(tree); i++) {
         sect = WIOKit::findEntryByPrefix(sect, tree[i], gIOServicePlane);
-        if (sect && i+1 == arrsize(tree))
-        {
-            if (WIOKit::getOSDataValue(sect, "AAPL,ig-platform-id", platform))
-            {
+        if (sect && i+1 == arrsize(tree)) {
+            if (WIOKit::getOSDataValue(sect, "AAPL,ig-platform-id", platform)) {
                 DBGLOG(kThisKextID, "found IGPU with ig-platform-id 0x%08x", platform);
                 return platform;
-            }
-            else
-            {
+            } else {
                 SYSLOG(kThisKextID, "found IGPU with missing ig-platform-id, assuming old");
             }
         }
@@ -83,7 +78,8 @@ void LWEnabler::configIgPlatform()
         case 0x19260004:
         case 0x0a26000a:
         case 0x0a2e0008:
-        case 0x0a2e000a: {
+        case 0x0a2e000a:
+        case 0x59260002: {
             lilu_os_memcpy(reinterpret_cast<uint32_t *>(rIgPlatformId), &gIgPlatformId, sizeof(uint32_t));
             DBGLOG(kThisKextID, "reverse order of ig-platform-id: 0x%02x, 0x%02x, 0x%02x, 0x%02x", *rIgPlatformId, *(rIgPlatformId+1), *(rIgPlatformId+2), *(rIgPlatformId+3));
             break;
@@ -192,6 +188,65 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                 // Search the specific ig-platform-id in the neighbourhood
                 while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))
                     curOff++;
+                // verify search
+                if (curOff < endOff) {
+                    DBGLOG(kThisKextID, "found platform-id (0x%08x) at framebuffer info data segment", gIgPlatformId);
+                    // now let's generate the patch for it
+                    // target offset should @ +97
+                    curOff += 97;
+                    uint8_t repl[MaxReplSize] {};
+                    lilu_os_memcpy(repl, curOff, MaxReplSize);
+                    DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *curOff, *(curOff+1), *(curOff+2), *(curOff+3), *(curOff+4));
+                    // apply platform specific patch pattern
+                    // 0x19260004 uses 0x0f
+                    memset(repl, 0x0f, MaxReplSize);
+                    if (memcmp(repl, curOff, MaxReplSize) == 0) {
+                        // already patch due to the kext has been
+                        // patched in the cache? we should stop here
+                        SYSLOG(kThisKextID, "already enabled internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                        return;
+                    }
+                    SYSLOG(kThisKextID, "binary patches for internal display have been generated.");
+                    // a more nature way to fix the lid wake issue by
+                    // copying back to the framebuffer in memory instead of
+                    // invoking the applyLookupPatch()
+                    // note: we didn't require to check kernel version
+                    // due to the fact that we don't care about which
+                    // version of kext will be loaded
+                    lilu_os_memcpy(curOff, repl, MaxReplSize);
+                    SYSLOG(kThisKextID, "enable internal display after sleep for ig-platform-id: 0x%08x", gIgPlatformId);
+                    progressState |= ProcessingState::EverythingDone;
+                    break;
+                } else {
+                    SYSLOG(kThisKextID, "cannot find platform-id at %s", *kextHSWFb);
+                    return;
+                }
+            } else {
+                SYSLOG(kThisKextID, "cannot find __ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+                return;
+            }
+        }
+        
+        // Enable lid wake for KabyLake (kbl) platform
+        if (!(progressState & ProcessingState::EverythingDone) &&
+            memcmp(kextList[i].id, kextKBLFbId, strlen(kextKBLFbId)) == 0) {
+            SYSLOG(kThisKextID, "found %s", kextList[i].id);
+            // it must be 0x59260002 due to the previous configPlatform's check
+            mach_vm_address_t address = patcher.solveSymbol(index,
+                                                            "__ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+            if (address) {
+                SYSLOG(kThisKextID, "obtained __ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+                patcher.clearError();
+                // Lookup the ig-platform-id specific framebuffer data
+                auto curOff = reinterpret_cast<uint8_t *>(address);
+                // The real patch place should be very close
+                // MaxSearchSize aka PAGE_SIZE is fairly enough
+                auto endOff = curOff + PAGE_SIZE;
+                // Max replace size
+                static constexpr size_t MaxReplSize {sizeof(uint8_t)};
+                // Search the specific ig-platform-id in the neighbourhood
+                while (curOff < endOff && memcmp(curOff, rIgPlatformId, sizeof(rIgPlatformId)))
+                curOff++;
                 // verify search
                 if (curOff < endOff) {
                     DBGLOG(kThisKextID, "found platform-id (0x%08x) at framebuffer info data segment", gIgPlatformId);
