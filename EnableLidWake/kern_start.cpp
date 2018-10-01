@@ -15,22 +15,21 @@ const char* kBootArgvDisable[] = { "-elwoff"  };
 const char* kBootArgvDebug[]   = { "-elwdbg"  };
 const char* kBootArgvBeta[]    = { "-elwbeta" };
 
-
-PluginConfiguration ADDPR(config) =
-{
+PluginConfiguration ADDPR(config) {
     xStringify(PRODUCT_NAME),
     parseModuleVersion(xStringify(MODULE_VERSION)),
     LiluAPI::AllowNormal | LiluAPI::AllowInstallerRecovery,
-    
-    kBootArgvDisable, arrsize(kBootArgvDisable),
-    
-    kBootArgvDebug,   arrsize(kBootArgvDebug),
-    
-    kBootArgvBeta,    arrsize(kBootArgvBeta),
-    
-    // minKernel: 10.10.x - maxKernel: 10.13.z
-    KernelVersion::Yosemite, KernelVersion::HighSierra,
-    
+    kBootArgvDisable,
+    arrsize(kBootArgvDisable),
+    kBootArgvDebug,
+    arrsize(kBootArgvDebug),
+    kBootArgvBeta,
+    arrsize(kBootArgvBeta),
+    // minKernel: 10.10 - maxKernel: 10.14+
+    KernelVersion::Yosemite,
+    KernelVersion::Mojave,
     // now let's get start
-    []() { elw.init(); }
+    []() {
+        elw.init();
+    }
 };

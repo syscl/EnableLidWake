@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v4.0.0
+- macOS Mojave supported (tested on Haswell)
+- New version style
+
 ### v3.9
 - Added support for ```0x0d26000f```
 
