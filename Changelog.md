@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v4.0.1
+
+- Updated framebuffer symbol to more general ```_gPlatformInformationList``` instead of specific symbols (preperation for Mojave)
+
 ### v4.0.0
 - macOS Mojave supported (tested on Haswell)
 - New version style

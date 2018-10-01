@@ -113,9 +113,9 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
             memcmp(kextList[i].id, kextHSWFbId, strlen(kextHSWFbId)) == 0) {
             SYSLOG(kThisKextID, "found %s", kextList[i].id);
             
-            mach_vm_address_t address = patcher.solveSymbol(index, "_ltDriveTable");
+            mach_vm_address_t address = patcher.solveSymbol(index, "_gPlatformInformationList");
             if (address) {
-                SYSLOG(kThisKextID, "obtained _ltDriveTable");
+                SYSLOG(kThisKextID, "obtained _gPlatformInformationList");
                 patcher.clearError();
                 
                 // Lookup the ig-platform-id specific framebuffer data
@@ -138,7 +138,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     lilu_os_memcpy(repl, curOff, MaxReplSize);
                     DBGLOG(kThisKextID, "%u, %u, %u, %u, %u", *curOff, *(curOff+1), *(curOff+2), *(curOff+3), *(curOff+4));
                     // apply platform specific patch pattern
-                    // 0x0a2e0008 uses 0x1f
+                    // 0x0a2e0008 and 0x0d26000f use 0x1f
                     // 0x0a2e000a and 0x0a26000a use 0x1e
                     memset(repl, (gIgPlatformId == 0x0a2e0008 || gIgPlatformId == 0x0d26000f) ? 0x1f : 0x1e, MaxReplSize);
                     if (memcmp(repl, curOff, MaxReplSize) == 0) {
@@ -164,7 +164,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     return;
                 }
             } else {
-                SYSLOG(kThisKextID, "cannot find _ltDriveTable");
+                SYSLOG(kThisKextID, "cannot find _gPlatformInformationList");
                 return;
             }
         }
@@ -174,10 +174,9 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
             memcmp(kextList[i].id, kextSKLFbId, strlen(kextSKLFbId)) == 0) {
             SYSLOG(kThisKextID, "found %s", kextList[i].id);
             // it must be 0x19260004 due to the previous configPlatform's check
-            mach_vm_address_t address = patcher.solveSymbol(index,
-                                                            "__ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+            mach_vm_address_t address = patcher.solveSymbol(index, "_gPlatformInformationList");
             if (address) {
-                SYSLOG(kThisKextID, "obtained __ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+                SYSLOG(kThisKextID, "obtained _gPlatformInformationList");
                 patcher.clearError();
                 // Lookup the ig-platform-id specific framebuffer data
                 auto curOff = reinterpret_cast<uint8_t *>(address);
@@ -223,7 +222,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     return;
                 }
             } else {
-                SYSLOG(kThisKextID, "cannot find __ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+                SYSLOG(kThisKextID, "cannot find _gPlatformInformationList");
                 return;
             }
         }
@@ -233,10 +232,9 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
             memcmp(kextList[i].id, kextKBLFbId, strlen(kextKBLFbId)) == 0) {
             SYSLOG(kThisKextID, "found %s", kextList[i].id);
             // it must be 0x59260002 due to the previous configPlatform's check
-            mach_vm_address_t address = patcher.solveSymbol(index,
-                                                            "__ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+            mach_vm_address_t address = patcher.solveSymbol(index, "_gPlatformInformationList");
             if (address) {
-                SYSLOG(kThisKextID, "obtained __ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+                SYSLOG(kThisKextID, "obtained _gPlatformInformationList");
                 patcher.clearError();
                 // Lookup the ig-platform-id specific framebuffer data
                 auto curOff = reinterpret_cast<uint8_t *>(address);
@@ -282,7 +280,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     return;
                 }
             } else {
-                SYSLOG(kThisKextID, "cannot find __ZZN11BanksiaTcon10processCmdE22kFBControllerCommand_tPmmS1_S1_E14tconFeatureSet");
+                SYSLOG(kThisKextID, "cannot find _gPlatformInformationList");
                 return;
             }
         }
