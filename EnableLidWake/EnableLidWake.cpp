@@ -78,6 +78,7 @@ void LWEnabler::configIgPlatform()
         case 0x19260004:
         case 0x0a26000a:
         case 0x0a2e0008:
+        case 0x0d26000f:
         case 0x0a2e000a:
         case 0x59260002: {
             lilu_os_memcpy(reinterpret_cast<uint32_t *>(rIgPlatformId), &gIgPlatformId, sizeof(uint32_t));
@@ -139,7 +140,7 @@ void LWEnabler::frameBufferPatch(KernelPatcher& patcher, size_t index, mach_vm_a
                     // apply platform specific patch pattern
                     // 0x0a2e0008 uses 0x1f
                     // 0x0a2e000a and 0x0a26000a use 0x1e
-                    memset(repl, gIgPlatformId == 0x0a2e0008 ? 0x1f : 0x1e, MaxReplSize);
+                    memset(repl, (gIgPlatformId == 0x0a2e0008 || gIgPlatformId == 0x0d26000f) ? 0x1f : 0x1e, MaxReplSize);
                     if (memcmp(repl, curOff, MaxReplSize) == 0) {
                         // already patch due to the kext has been
                         // patched in the cache? we should stop here

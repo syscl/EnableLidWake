@@ -1,5 +1,8 @@
 EnableLidWake Changelog
 ==============
+### v3.9
+- Added support for ```0x0d26000f```
+
 ### v3.8
 
 - Implemented lid wake for KabyLake (KBL) platform
