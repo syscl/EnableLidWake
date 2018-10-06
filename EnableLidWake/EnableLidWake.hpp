@@ -9,7 +9,7 @@
 
 #include <Headers/kern_patcher.hpp>
 
-#define kThisKextID "org.syscl.EnableLidWake"
+#define kThisModule "elw"
 
 class LWEnabler
 {

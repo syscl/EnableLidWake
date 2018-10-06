@@ -1,5 +1,9 @@
 EnableLidWake Changelog
 ==============
+### v4.0.2
+
+- Reduced module string length less than 10 due to  ```SYSTRACE_COND``` constraint
+
 ### v4.0.1
 
 - Updated framebuffer symbol to more general ```_gPlatformInformationList``` instead of specific symbols (preperation for Mojave)
